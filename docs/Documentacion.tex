@@ -14,7 +14,6 @@
 \usepackage{listings}
 \usepackage{xcolor}
 
-% Configuración de colores para bloques de código
 \definecolor{codegreen}{rgb}{0,0.6,0}
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
 \definecolor{codepurple}{rgb}{0.58,0,0.82}
@@ -66,30 +65,15 @@ Para dar solución a los requerimientos de la tienda, estructuramos el modelo me
 
 \begin{figure}[htbp]
     \centering
-    \vspace{1.5cm} 
-    \begin{minipage}{0.8\textwidth}
-        \centering
-        \small
-        \setlength{\fboxrule}{1pt}
-        \fbox{
-            \begin{minipage}{\dimexpr\textwidth-2\fboxsep-2\fboxrule}
-                \vspace{1em}
-                \centering
-                \textbf{[Espacio para el Diagrama Entidad-Relación]} \\
-                \vspace{0.5em}
-                \textit{Puedes generar la imagen usando el código PlantUML provisto en el paso anterior, guardarla como \texttt{diagrama\_er.png} e incluirla en esta sección.}
-                \vspace{1em}
-            \end{minipage}
-        }
-    \end{minipage}
+    \includegraphics[width=\textwidth]{DER.png}
     \caption{Esquema conceptual del modelo Entidad-Relación de la tienda electrónica.}
-    \label{fig:diagrama\_er}
+    \label{fig:diagrama_er}
 \end{figure}
 
 \subsection{Definición de Claves y Relaciones}
 Para asegurar la consistencia y la integridad referencial de la información, se definieron con precisión las llaves dentro de nuestro modelo:
 \begin{itemize}
-    \item \textbf{Claves Primarias (PK):} Cada entidad cuenta con un identificador único auto-incremental para indexar los registros de forma eficiente: \texttt{id\_cliente}, \texttt{id\_producto}, \texttt{id\_categoria}, \texttt{id\_pedido}, \texttt{id\_detalle} e \texttt{id\_reseña} [cite: 68-74].
+    \item \textbf{Claves Primarias (PK):} Cada entidad cuenta con un identificador único auto-incremental para indexar los registros de forma eficiente: \texttt{id\_cliente}, \texttt{id\_producto}, \texttt{id\_categoria}, \texttt{id\_pedido}, \texttt{id\_detalle} e \texttt{id\_reseña}.
     \item \textbf{Claves Foráneas (FK):} Establecen los vínculos relacionales y las restricciones de integridad entre las tablas:
     \begin{itemize}
         \item \texttt{id\_categoria} en \textit{Productos} (relaciona cada artículo con su respectiva familia o categoría).
@@ -103,9 +87,9 @@ Para asegurar la consistencia y la integridad referencial de la información, se
 \subsection{Justificación de la Normalización (3NF)}
 El diseño de este esquema se desarrolló siguiendo estrictamente los principios de la Tercera Forma Normal (3NF) con la finalidad de eliminar la redundancia de datos y prevenir anomalías durante las inserciones, actualizaciones o borrados:
 \begin{enumerate}
-    \item \textbf{Primera Forma Normal (1NF):} Se garantizó que todos los atributos sean atómicos (valores indivisibles). En lugar de almacenar múltiples productos o cantidades dentro de una misma celda de texto en la tabla de \textit{Pedidos}, se estructuró la tabla independiente \textit{Detalles\_Pedido} para desagregar la información de manera limpia [cite: 72-73].
+    \item \textbf{Primera Forma Normal (1NF):} Se garantizó que todos los atributos sean atómicos (valores indivisibles). En lugar de almacenar múltiples productos o cantidades dentro de una misma celda de texto en la tabla de \textit{Pedidos}, se estructuró la tabla independiente \textit{Detalles\_Pedido} para desagregar la información de manera limpia.
     \item \textbf{Segunda Forma Normal (2NF):} Al estar el modelo en 1NF, se verificó que todos los atributos que no forman parte de la clave primaria dependan por completo de ella de forma directa, eliminando cualquier tipo de dependencia parcial.
-    \item \textbf{Tercera Forma Normal (3NF):} Se eliminaron por completo las dependencias transitivas. El ejemplo más claro es la separación entre \textit{Productos} y \textit{Categorías} [cite: 69-71]. Al almacenar únicamente la clave foránea \texttt{id\_categoria} en la tabla de productos, evitamos repetir descripciones o nombres de categorías masivamente en el catálogo. De este modo, si la tienda decide renombrar una categoría, la modificación se realiza en un solo registro y se propaga limpiamente a todos los productos relacionados.
+    \item \textbf{Tercera Forma Normal (3NF):} Se eliminaron por completo las dependencias transitivas. El ejemplo más claro es la separación entre \textit{Productos} y \textit{Categorías}. Al almacenar únicamente la clave foránea \texttt{id\_categoria} en la tabla de productos, evitamos repetir descripciones o nombres de categorías masivamente en el catálogo. De este modo, si la tienda decide renombrar una categoría, la modificación se realiza en un solo registro y se propaga limpiamente a todos los productos relacionados.
 \end{enumerate}
 
 \end{document}
