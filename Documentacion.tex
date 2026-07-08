@@ -1,0 +1,111 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,es-tabla]{babel}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{xcolor}
+
+% Configuración de colores para bloques de código
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolor}{rgb}{0.96,0.96,0.94}
+
+\lstset{
+    backgroundcolor=\color{backcolor},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{blue},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\title{\textbf{Proyecto Final: Diseño e Implementación de una Base de Datos Relacional para una Tienda Online de Electrónicos}}
+\author{\textbf{Joanthan Jesús Flores Reyes} \\ Universidad Autónoma Metropolitana, Unidad Cuajimalpa}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Introducción al Problema y Objetivos}
+En este proyecto se aborda el diseño y la implementación de una base de datos relacional orientada a una tienda en línea especializada en la venta de productos electrónicos. El propósito principal es desarrollar un sistema estable, consistente y bien estructurado que permita gestionar de manera eficiente toda la operación diaria del negocio, abarcando desde el control estricto de inventarios hasta el seguimiento detallado de clientes, pedidos y opiniones de los compradores.
+
+\subsection{Objetivos del Proyecto}
+\begin{itemize}[label=$\bullet$]
+    \item \textbf{Diseño Estructurado:} Modelar un esquema relacional sólido que interconecte de forma óptima las entidades esenciales del sistema: Clientes, Productos, Categorías, Pedidos, Detalles de Pedido y Reseñas.
+    \item \textbf{Implementación de Reglas de Negocio:} Restringir el comportamiento de los datos mediante reglas operativas directo en el SGBD (MySQL). Esto incluye asegurar que el stock nunca sea negativo, limitar a los clientes a un máximo de 5 pedidos pendientes y validar que solo los compradores reales puedan dejar reseñas sobre un producto.
+    \item \textbf{Automatización y Optimización:} Crear consultas avanzadas y un conjunto de 8 procedimientos almacenados para automatizar los procesos clave, optimizando el rendimiento general mediante índices estratégicos y validando la integridad del sistema con un lote completo de datos de prueba.
+\end{itemize}
+
+\section{Análisis y Diseño del Modelo}
+
+\subsection{Diagrama Entidad-Relación (ER)}
+Para dar solución a los requerimientos de la tienda, estructuramos el modelo mediante un esquema de 6 tablas interconectadas. Esto garantiza una separación clara de responsabilidades y facilita el mantenimiento y escalabilidad a largo plazo.
+
+\begin{figure}[htbp]
+    \centering
+    \vspace{1.5cm} 
+    \begin{minipage}{0.8\textwidth}
+        \centering
+        \small
+        \setlength{\fboxrule}{1pt}
+        \fbox{
+            \begin{minipage}{\dimexpr\textwidth-2\fboxsep-2\fboxrule}
+                \vspace{1em}
+                \centering
+                \textbf{[Espacio para el Diagrama Entidad-Relación]} \\
+                \vspace{0.5em}
+                \textit{Puedes generar la imagen usando el código PlantUML provisto en el paso anterior, guardarla como \texttt{diagrama\_er.png} e incluirla en esta sección.}
+                \vspace{1em}
+            \end{minipage}
+        }
+    \end{minipage}
+    \caption{Esquema conceptual del modelo Entidad-Relación de la tienda electrónica.}
+    \label{fig:diagrama\_er}
+\end{figure}
+
+\subsection{Definición de Claves y Relaciones}
+Para asegurar la consistencia y la integridad referencial de la información, se definieron con precisión las llaves dentro de nuestro modelo:
+\begin{itemize}
+    \item \textbf{Claves Primarias (PK):} Cada entidad cuenta con un identificador único auto-incremental para indexar los registros de forma eficiente: \texttt{id\_cliente}, \texttt{id\_producto}, \texttt{id\_categoria}, \texttt{id\_pedido}, \texttt{id\_detalle} e \texttt{id\_reseña} [cite: 68-74].
+    \item \textbf{Claves Foráneas (FK):} Establecen los vínculos relacionales y las restricciones de integridad entre las tablas:
+    \begin{itemize}
+        \item \texttt{id\_categoria} en \textit{Productos} (relaciona cada artículo con su respectiva familia o categoría).
+        \item \texttt{id\_cliente} en \textit{Pedidos} y \textit{Reseñas} (asocia las compras y los comentarios con el usuario correspondiente).
+        \item \texttt{id\_pedido} e \texttt{id\_producto} en \textit{Detalles\_Pedido} (desglosa cada uno de los artículos que componen una orden).
+        \item \texttt{id\_producto} en \textit{Reseñas} (vincula la calificación y comentario directamente con el artículo adquirido).
+    \end{itemize}
+    \item \textbf{Claves Candidatas:} El atributo \texttt{correo} en la tabla \textit{Clientes} se define con una restricción de unicidad (\texttt{UNIQUE}), funcionando como una clave alternativa ideal para identificar a cada usuario de forma única en el sistema.
+\end{itemize}
+
+\subsection{Justificación de la Normalización (3NF)}
+El diseño de este esquema se desarrolló siguiendo estrictamente los principios de la Tercera Forma Normal (3NF) con la finalidad de eliminar la redundancia de datos y prevenir anomalías durante las inserciones, actualizaciones o borrados:
+\begin{enumerate}
+    \item \textbf{Primera Forma Normal (1NF):} Se garantizó que todos los atributos sean atómicos (valores indivisibles). En lugar de almacenar múltiples productos o cantidades dentro de una misma celda de texto en la tabla de \textit{Pedidos}, se estructuró la tabla independiente \textit{Detalles\_Pedido} para desagregar la información de manera limpia [cite: 72-73].
+    \item \textbf{Segunda Forma Normal (2NF):} Al estar el modelo en 1NF, se verificó que todos los atributos que no forman parte de la clave primaria dependan por completo de ella de forma directa, eliminando cualquier tipo de dependencia parcial.
+    \item \textbf{Tercera Forma Normal (3NF):} Se eliminaron por completo las dependencias transitivas. El ejemplo más claro es la separación entre \textit{Productos} y \textit{Categorías} [cite: 69-71]. Al almacenar únicamente la clave foránea \texttt{id\_categoria} en la tabla de productos, evitamos repetir descripciones o nombres de categorías masivamente en el catálogo. De este modo, si la tienda decide renombrar una categoría, la modificación se realiza en un solo registro y se propaga limpiamente a todos los productos relacionados.
+\end{enumerate}
+
+\end{document}

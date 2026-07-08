@@ -1,0 +1,74 @@
+@startuml
+skinparam roundcorner 5
+skinparam linetype ortho
+skinparam nodesep 80
+skinparam ranksep 80
+
+skinparam entity {
+    BackgroundColor White
+    BorderColor Black
+    ArrowColor #333333
+}
+
+entity "Clientes" as clientes {
+  * id_cliente : INT <<PK>>
+  --
+  nombre : VARCHAR
+  correo : VARCHAR <<UNIQUE>>
+  telefono : VARCHAR
+  direccion : VARCHAR
+}
+
+entity "Reseñas" as resenas {
+  * id_reseña : INT <<PK>>
+  --
+  id_producto : INT <<FK>>
+  id_cliente : INT <<FK>>
+  calificacion : INT (1-5)
+  comentario : TEXT
+  fecha : DATE
+}
+
+entity "Categorias" as categorias {
+  * id_categoria : INT <<PK>>
+  --
+  nombre : VARCHAR
+  descripcion : TEXT
+}
+
+entity "Productos" as productos {
+  * id_producto : INT <<PK>>
+  --
+  nombre : VARCHAR
+  descripcion : TEXT
+  precio : DECIMAL
+  stock : INT >= 0
+  id_categoria : INT <<FK>>
+}
+
+entity "Pedidos" as pedidos {
+  * id_pedido : INT <<PK>>
+  --
+  id_cliente : INT <<FK>>
+  fecha_pedido : DATE
+  estado : ENUM('pendiente', 'enviado', 'entregado')
+}
+
+entity "Detalles_Pedido" as detalles {
+  * id_detalle : INT <<PK>>
+  --
+  id_pedido : INT <<FK>>
+  id_producto : INT <<FK>>
+  cantidad : INT
+  precio_unitario : DECIMAL
+}
+
+clientes ||-right-o{ resenas : "escribe"
+productos ||-left-o{ resenas : "recibe"
+
+categorias ||-down-o{ productos : "contiene"
+
+clientes ||-down-o{ pedidos : "realiza"
+productos ||-down-o{ detalles : "incluye"
+pedidos ||-right-|{ detalles : "tiene"
+@enduml
