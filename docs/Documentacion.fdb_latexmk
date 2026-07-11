@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1783620460.09199 "c:/Users/joant/OneDrive/Escritorio/Proyecto BD/docs/Documentacion.tex" "Documentacion.pdf" "Documentacion" 1783620461.75731 0
+["pdflatex"] 1783695253.94272 "c:/Users/joant/OneDrive/Escritorio/Proyecto BD/docs/Documentacion.tex" "Documentacion.pdf" "Documentacion" 1783695255.22105 0
   "C:/Users/joant/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1783530058 80909 eab91d9745dd2edfd62a31d53cd5fe15 ""
   "C:/Users/joant/AppData/Local/MiKTeX/fonts/pk/ljfour/jknappen/ec/dpi600/tcrm1095.pk" 1783530063 12668 e246bcc7d40f434bbe854584be54f2cd ""
   "C:/Users/joant/AppData/Local/MiKTeX/miktex/data/le/pdftex/pdflatex.fmt" 1780328041 13353041 217dec5c761c713b639238d56a752f87 ""
@@ -105,11 +105,11 @@
   "C:/Users/joant/AppData/Local/Programs/MiKTeX/tex/latex/url/url.sty" 1388490452 12796 8edb7d69a20b857904dd0ea757c14ec9 ""
   "C:/Users/joant/AppData/Local/Programs/MiKTeX/tex/latex/xcolor/xcolor.sty" 1729265222 55384 b454dec21c2d9f45ec0b793f0995b992 ""
   "DER.png" 1783532086 119849 038ff46e434547000a3b79bd4b0b51cc ""
-  "Documentacion.aux" 1783620461 2832 978b23bb3604b56eb2bdadfcf158fa68 "pdflatex"
-  "Documentacion.out" 1783620461 3495 1c2d8fb37d62cd1924af395ad63256bb "pdflatex"
-  "Documentacion.tex" 1783620459 24718 9bb2d8ada62465e15ba14ca121178b80 ""
-  "Documentacion.toc" 1783620461 1536 56ff58e6c4bb18016d03a2ab77e1955f "pdflatex"
-  "c:/Users/joant/OneDrive/Escritorio/Proyecto BD/docs/Documentacion.tex" 1783620459 24718 9bb2d8ada62465e15ba14ca121178b80 ""
+  "Documentacion.aux" 1783695255 2832 978b23bb3604b56eb2bdadfcf158fa68 "pdflatex"
+  "Documentacion.out" 1783695255 3495 1c2d8fb37d62cd1924af395ad63256bb "pdflatex"
+  "Documentacion.tex" 1783695253 24701 7ea42c6653c750c69cad14662824ce72 ""
+  "Documentacion.toc" 1783695255 1536 56ff58e6c4bb18016d03a2ab77e1955f "pdflatex"
+  "c:/Users/joant/OneDrive/Escritorio/Proyecto BD/docs/Documentacion.tex" 1783695253 24701 7ea42c6653c750c69cad14662824ce72 ""
   (generated)
   "Documentacion.aux"
   "Documentacion.log"
