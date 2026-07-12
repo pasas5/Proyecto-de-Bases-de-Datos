@@ -1,0 +1,129 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,es-tabla]{babel}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+    basicstyle=\ttfamily\footnotesize,
+    breaklines=true,
+    backgroundcolor=\color{black!5},
+    frame=single,
+    literate={á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
+             {ñ}{{\~n}}1 {Ñ}{{\~N}}1
+}
+
+\title{\textbf{Informe de Validación y Optimización de Base de Datos}}
+\author{\textbf{Joanthan Jesús Flores Reyes}}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Resultados de Consultas con Datos de Prueba}
+Se poblaron las tablas con un lote de prueba (30 productos, 15 clientes, 20 pedidos) para ejecutar las vistas analíticas. A continuación, se presentan los resultados obtenidos:
+
+\textbf{Consulta 1: Productos disponibles por categoría (Muestra)}
+\begin{table}[H]
+    \centering
+    \footnotesize
+    \begin{tabular}{@{}llrr@{}}
+        \toprule
+        \textbf{Categoría} & \textbf{Producto} & \textbf{Precio (\$)} & \textbf{Stock} \\
+        \midrule
+        Almacenamiento & Gabinete Externo Orico para SSD & 450.00 & 35 \\
+        Audio & Audífonos Inalámbricos Xiaomi & 850.00 & 50 \\
+        Componentes PC & Pasta Térmica de Alto Rendimiento & 200.00 & 100 \\
+        Monitores & Monitor de Oficina 24 pulgadas FHD & 2200.00 & 15 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\textbf{Consulta 2: Clientes con pedidos pendientes y gasto histórico}
+\begin{table}[H]
+    \centering
+    \footnotesize
+    \begin{tabular}{@{}llrr@{}}
+        \toprule
+        \textbf{Nombre} & \textbf{Correo} & \textbf{Pedidos Pendientes} & \textbf{Total Gastado (\$)} \\
+        \midrule
+        Jorge Salinas & jorge.s@email.com & 2 & 9300.00 \\
+        Daniela Torres & dany.t@email.com & 1 & 900.00 \\
+        Fernando Silva & fer.silva@email.com & 1 & 8900.00 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\textbf{Consulta 3: Top productos con mejor calificación promedio}
+\begin{table}[H]
+    \centering
+    \footnotesize
+    \begin{tabular}{@{}lrr@{}}
+        \toprule
+        \textbf{Producto} & \textbf{Promedio Calificación} & \textbf{Total Reseñas} \\
+        \midrule
+        Tarjeta Gráfica AMD Radeon RX 7800 XT & 5.00 & 1 \\
+        Monitor Gaming 144Hz 27 pulgadas & 5.00 & 1 \\
+        Audífonos de Estudio Cerrados & 5.00 & 1 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\section{Índices Creados y su Impacto (Análisis EXPLAIN)}
+Para optimizar el rendimiento del sistema, se crearon los siguientes índices no agrupados: \texttt{idx\_productos\_categoria}, \texttt{idx\_pedidos\_cliente} y \texttt{idx\_productos\_nombre}. 
+
+Al utilizar el comando \texttt{EXPLAIN} en consultas que filtran por categoría o cliente, se observó el siguiente impacto:
+\begin{itemize}
+    \item \textbf{Antes de los índices:} El plan de ejecución mostraba un tipo de búsqueda \textit{ALL} (Full Table Scan), obligando al motor a recorrer el 100\% de las filas.
+    \item \textbf{Después de los índices:} El tipo de búsqueda cambió a \textit{ref}. La métrica \textit{rows} se redujo drásticamente, ya que el motor accede directamente a los registros coincidentes mediante la estructura del árbol de índices, reduciendo los tiempos de respuesta y el consumo de CPU.
+\end{itemize}
+
+\section{Pruebas de Procedimientos Almacenados}
+Se validó la robustez de las reglas de negocio ejecutando pruebas funcionales bajo diferentes escenarios.
+
+\textbf{Escenario 1: Intento de reseña sin compra previa (\texttt{sp\_registrar\_reseña})} \\
+Se simuló a un usuario intentando calificar un artículo que no ha adquirido. El procedimiento bloqueó la acción:
+\begin{lstlisting}[numbers=none]
+Error Code: 45000. Error: Solo los clientes que han comprado el producto pueden dejar una reseña.
+\end{lstlisting}
+
+\textbf{Escenario 2: Límite de pedidos excedido (\texttt{sp\_registrar\_pedido})} \\
+Se intentó abrir una sexta orden para un cliente que ya contaba con 5 pedidos pendientes. La restricción se activó exitosamente:
+\begin{lstlisting}[numbers=none]
+Error Code: 45000. Error: El cliente ya alcanzó el límite de 5 pedidos pendientes.
+\end{lstlisting}
+
+\textbf{Escenario 3: Actualización de inventario (\texttt{sp\_actualizar\_stock})} \\
+Al simular la compra de 5 unidades de un producto, el sistema ejecutó el descuento exacto sobre la tabla \textit{Productos}, validando la integridad del inventario.
+
+\textbf{Escenario 4: Actualización de estados de envío (\texttt{sp\_cambiar\_estado\_pedido})} \\
+El sistema permitió modificar de manera controlada el estado de seguimiento del pedido ID 5, pasando de 'pendiente' a 'enviado'.
+
+\textbf{Escenario 5: Borrado seguro de reseñas (\texttt{sp\_eliminar\_reseña})} \\
+Al eliminar una calificación, el procedimiento recalculó automáticamente y devolvió el nuevo promedio general del artículo afectado.
+
+\textbf{Escenario 6: Prevención de duplicados en catálogo (\texttt{sp\_agregar\_producto})} \\
+Se intentó insertar un producto con un nombre ya existente en la misma categoría. El candado funcionó y detuvo la operación:
+\begin{lstlisting}[numbers=none]
+Error Code: 45000. Error: Ya existe un producto con el mismo nombre en esta categoría.
+\end{lstlisting}
+
+\textbf{Escenario 7: Actualización de datos de contacto (\texttt{sp\_actualizar\_cliente})} \\
+El sistema permitió la modificación del teléfono y domicilio de un cliente sin corromper el historial de pedidos asociados a su identificador.
+
+\textbf{Escenario 8: Generación de alertas de inventario (\texttt{sp\_reporte\_stock\_bajo})} \\
+La ejecución devolvió un reporte inmediato de los artículos con menos de 5 unidades, adjuntando la alerta preventiva \textit{"¡Cuidado: Stock bajo, requiere reabastecimiento!"}.
+
+\section{Propuestas de Mejoras}
+Con base en el análisis de rendimiento actual, se proponen las siguientes optimizaciones para la escalabilidad del sistema:
+\begin{enumerate}
+    \item \textbf{Índice Compuesto en Detalles de Pedido:} Crear un índice sobre \texttt{(id\_pedido, id\_producto)} para acelerar la generación de facturas y los cruces de información al momento de validar las reseñas.
+    \item \textbf{Particionamiento de Tablas (\textit{Table Partitioning}):} Implementar particiones por rango en la tabla \textit{Pedidos} utilizando la columna \texttt{fecha\_pedido}. Esto evitará la degradación del rendimiento cuando el volumen de órdenes históricas crezca exponencialmente con los años.
+\end{enumerate}
+
+\end{document}
