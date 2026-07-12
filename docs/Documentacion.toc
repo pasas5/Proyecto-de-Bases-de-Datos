@@ -3,15 +3,16 @@
 \contentsline {subsection}{\numberline {1.1}Objetivos del Proyecto}{2}{subsection.1.1}%
 \contentsline {section}{\numberline {2}Análisis y Diseño del Modelo}{2}{section.2}%
 \contentsline {subsection}{\numberline {2.1}Diagrama Entidad-Relación (ER)}{2}{subsection.2.1}%
-\contentsline {subsection}{\numberline {2.2}Definición de Claves y Relaciones}{2}{subsection.2.2}%
-\contentsline {subsection}{\numberline {2.3}Justificación de la Normalización (3NF)}{4}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.2}Definición de Claves y Relaciones}{3}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Justificación de la Normalización (3NF)}{3}{subsection.2.3}%
 \contentsline {section}{\numberline {3}Implementación de la Base de Datos}{4}{section.3}%
 \contentsline {section}{\numberline {4}Validación y Optimización}{4}{section.4}%
-\contentsline {subsection}{\numberline {4.1}Pruebas de Procedimientos Almacenados}{4}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}Impacto de los Índices (Análisis con EXPLAIN)}{5}{subsection.4.2}%
-\contentsline {subsection}{\numberline {4.3}Propuestas de Mejoras}{5}{subsection.4.3}%
-\contentsline {section}{\numberline {5}Conclusiones y Lecciones Aprendidas}{5}{section.5}%
-\contentsline {section}{\numberline {6}Anexos: Scripts SQL Completos}{6}{section.6}%
-\contentsline {subsection}{\numberline {6.1}01\_esquema\_e\_indices.sql}{6}{subsection.6.1}%
-\contentsline {subsection}{\numberline {6.2}02\_datos\_prueba.sql}{7}{subsection.6.2}%
-\contentsline {subsection}{\numberline {6.3}03\_procedimientos\_y\_consultas.sql}{9}{subsection.6.3}%
+\contentsline {subsection}{\numberline {4.1}Resultados de las Consultas Analíticas}{4}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Resultados de Pruebas de Procedimientos Almacenados}{5}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Impacto de los Índices (Análisis con EXPLAIN)}{6}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Propuestas de Mejoras}{6}{subsection.4.4}%
+\contentsline {section}{\numberline {5}Conclusiones y Lecciones Aprendidas}{6}{section.5}%
+\contentsline {section}{\numberline {6}Anexos: Scripts SQL Completos}{7}{section.6}%
+\contentsline {subsection}{\numberline {6.1}01\_esquema\_e\_indices.sql}{7}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}02\_datos\_prueba.sql}{8}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}03\_procedimientos\_y\_consultas.sql}{10}{subsection.6.3}%

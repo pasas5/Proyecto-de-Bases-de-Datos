@@ -13,6 +13,7 @@
 \usepackage{booktabs}
 \usepackage{listings}
 \usepackage{xcolor}
+\usepackage{float}
 
 \definecolor{codegreen}{rgb}{0,0.6,0}
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
@@ -66,9 +67,9 @@ En este proyecto se aborda el diseño y la implementación de una base de datos 
 \subsection{Diagrama Entidad-Relación (ER)}
 Para dar solución a los requerimientos de la tienda, estructuramos el modelo mediante un esquema de 6 tablas interconectadas. Esto garantiza una separación clara de responsabilidades y facilita el mantenimiento y escalabilidad a largo plazo.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{DER.png}
+    \includegraphics[width=0.8\textwidth]{DER.png}
     \caption{Esquema conceptual del modelo Entidad-Relación de la tienda electrónica.}
     \label{fig:diagrama_er}
 \end{figure}
@@ -79,20 +80,23 @@ Para asegurar la consistencia y la integridad referencial de la información, se
     \item \textbf{Claves Primarias (PK):} Cada entidad cuenta con un identificador único auto-incremental para indexar los registros de forma eficiente: \texttt{id\_cliente}, \texttt{id\_producto}, \texttt{id\_categoria}, \texttt{id\_pedido}, \texttt{id\_detalle} e \texttt{id\_reseña}.
     \item \textbf{Claves Foráneas (FK):} Establecen los vínculos relacionales y las restricciones de integridad entre las tablas:
     \begin{itemize}
-        \item \texttt{id\_categoria} en \textit{Productos} (relaciona cada artículo con su respectiva familia o categoría).
-        \item \texttt{id\_cliente} en \textit{Pedidos} y \textit{Reseñas} (asocia las compras y los comentarios con el usuario correspondiente).
-        \item \texttt{id\_pedido} e \texttt{id\_producto} en \textit{Detalles\_Pedido} (desglosa cada uno de los artículos que componen una orden).
-        \item \texttt{id\_producto} en \textit{Reseñas} (vincula la calificación y comentario directamente con el artículo adquirido).
+        \item \texttt{id\_categoria} en Productos (relaciona cada artículo con su respectiva familia o categoría).
+        \item \texttt{id\_cliente} en Pedidos y Reseñas (asocia las compras y los comentarios con el usuario correspondiente).
+        \item \texttt{id\_pedido} e \texttt{id\_producto} en Detalles\_Pedido (desglosa cada uno de los artículos que componen una orden).
+        \item \texttt{id\_producto} en Reseñas (vincula la calificación y comentario directamente con el artículo adquirido).
     \end{itemize}
-    \item \textbf{Claves Candidatas:} El atributo \texttt{correo} en la tabla \textit{Clientes} se define con una restricción de unicidad (\texttt{UNIQUE}), funcionando como una clave alternativa ideal para identificar a cada usuario de forma única en el sistema.
+    \item \textbf{Claves Candidatas:} El atributo correo en la tabla Clientes se define con una restricción de unicidad (UNIQUE), funcionando como una clave alternativa ideal para identificar a cada usuario de forma única en el sistema.
 \end{itemize}
 
 \subsection{Justificación de la Normalización (3NF)}
-El diseño de este esquema se desarrolló siguiendo estrictamente los principios de la Tercera Forma Normal (3NF) con la finalidad de eliminar la redundancia de datos y prevenir anomalías durante las inserciones, actualizaciones o borrados:
+El diseño de la base de datos se estructuró siguiendo los principios de la Tercera Forma Normal (3NF) para garantizar la integridad de los datos, evitar la redundancia masiva y prevenir anomalías al actualizar o borrar información. A continuación se detalla cómo el modelo cumple con cada regla:
 \begin{enumerate}
-    \item \textbf{Primera Forma Normal (1NF):} Se garantizó que todos los atributos sean atómicos (valores indivisibles). En lugar de almacenar múltiples productos o cantidades dentro de una misma celda de texto en la tabla de \textit{Pedidos}, se estructuró la tabla independiente \textit{Detalles\_Pedido} para desagregar la información de manera limpia.
-    \item \textbf{Segunda Forma Normal (2NF):} Al estar el modelo en 1NF, se verificó que todos los atributos que no forman parte de la clave primaria dependan por completo de ella de forma directa, eliminando cualquier tipo de dependencia parcial.
-    \item \textbf{Tercera Forma Normal (3NF):} Se eliminaron por completo las dependencias transitivas. El ejemplo más claro es la separación entre \textit{Productos} y \textit{Categorías}. Al almacenar únicamente la clave foránea \texttt{id\_categoria} en la tabla de productos, evitamos repetir descripciones o nombres de categorías masivamente en el catálogo. De este modo, si la tienda decide renombrar una categoría, la modificación se realiza en un solo registro y se propaga limpiamente a todos los productos relacionados.
+    \item \textbf{Primera Forma Normal (1NF) - Atributos atómicos:} 
+    Esta regla dicta que cada celda de una tabla debe contener un único valor indivisible. En el contexto de la tienda, un cliente puede comprar varios artículos en una sola orden. En lugar de almacenar una lista separada por comas (por ejemplo: "Monitor, Teclado, Ratón") en una sola celda dentro de la tabla \textit{Pedidos}, se estructuró la tabla independiente \textit{Detalles\_Pedido}. De esta manera, cada artículo comprado se registra en su propia fila de forma atómica y limpia.
+    \item \textbf{Segunda Forma Normal (2NF) - Dependencia funcional completa:} 
+    Además de cumplir con la 1NF, todos los atributos que no son clave deben depender por completo de la clave primaria. Por ejemplo, en la tabla \textit{Detalles\_Pedido}, si incluyéramos el nombre del producto, ese nombre dependería únicamente del \texttt{id\_producto} y no del pedido en sí. Para evitar esta dependencia parcial, toda la información descriptiva del artículo se mantiene exclusivamente en la tabla \textit{Productos}.
+    \item \textbf{Tercera Forma Normal (3NF) - Sin dependencias transitivas:} 
+    Estando en 2NF, ningún atributo no clave debe depender de otro atributo no clave. El mejor ejemplo en nuestro esquema es la separación entre \textit{Productos} y \textit{Categorías}. Si almacenáramos el nombre y la descripción de la categoría directamente en la tabla \textit{Productos}, estos datos dependerían de la categoría y no del producto directamente. Al aislar esta información en la tabla \textit{Categorías}, evitamos repetir el mismo texto descriptivo cientos de veces en el catálogo. De este modo, si la tienda decide modificar el nombre de una categoría, la actualización se realiza en un solo registro y se propaga de forma automática a todos los productos relacionados.
 \end{enumerate}
 
 \section{Implementación de la Base de Datos}
@@ -102,20 +106,104 @@ Los scripts desarrollados se encuentran alojados en el repositorio del proyecto 
 
 \section{Validación y Optimización}
 
-\subsection{Pruebas de Procedimientos Almacenados}
-Se validó la robustez de las reglas de negocio mediante la ejecución de diferentes escenarios de prueba sobre los procedimientos almacenados:
-\begin{itemize}
-    \item \textbf{Intento de reseña sin compra previa:} Al ejecutar el procedimiento \texttt{sp\_registrar\_reseña} con un cliente que no ha adquirido el producto especificado, el sistema bloquea la transacción y arroja correctamente el error \textit{SQLSTATE 45000: Solo los clientes que han comprado el producto pueden dejar una reseña}.
-    \item \textbf{Límite de pedidos:} Se probó el procedimiento \texttt{sp\_registrar\_pedido} para un cliente que ya contaba con 5 pedidos en estado "pendiente". El sistema detuvo la inserción, cumpliendo con la regla de negocio establecida.
-\end{itemize}
+\subsection{Resultados de las Consultas Analíticas}
+Al ejecutar las vistas analíticas sobre el lote de datos de prueba, el sistema generó los siguientes reportes:
+
+\textbf{Consulta 1: Productos disponibles por categoría (Muestra parcial)} \\
+La consulta agrupó y ordenó correctamente el catálogo de menor a mayor precio dentro de cada categoría.
+\begin{table}[H]
+    \centering
+    \footnotesize
+    \begin{tabular}{@{}llrr@{}}
+        \toprule
+        \textbf{Categoría} & \textbf{Producto} & \textbf{Precio (\$)} & \textbf{Stock} \\
+        \midrule
+        Almacenamiento & Gabinete Externo Orico para SSD & 450.00 & 35 \\
+        Audio & Audífonos Inalámbricos Xiaomi & 850.00 & 50 \\
+        Componentes PC & Pasta Térmica de Alto Rendimiento & 200.00 & 100 \\
+        Monitores & Monitor de Oficina 24" FHD & 2200.00 & 15 \\
+        Periféricos & Mouse Pad RGB Extendido & 350.00 & 100 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\textbf{Consulta 2: Clientes con pedidos pendientes y total histórico} \\
+El reporte filtró exitosamente a los usuarios que tienen órdenes en estado "pendiente" y calculó su gasto total de compras.
+\begin{table}[H]
+    \centering
+    \footnotesize
+    \begin{tabular}{@{}llrr@{}}
+        \toprule
+        \textbf{Nombre} & \textbf{Correo} & \textbf{Pedidos Pendientes} & \textbf{Total Gastado (\$)} \\
+        \midrule
+        Jorge Salinas & jorge.s@email.com & 2 & 9300.00 \\
+        Daniela Torres & dany.t@email.com & 1 & 900.00 \\
+        Fernando Silva & fer.silva@email.com & 1 & 8900.00 \\
+        Hugo Morales & hugo.m@email.com & 1 & 3100.00 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\textbf{Consulta 3: Top 5 productos con mejor calificación} \\
+El sistema promedió correctamente las calificaciones dejadas por los usuarios en el catálogo.
+\begin{table}[H]
+    \centering
+    \footnotesize
+    \begin{tabular}{@{}lrr@{}}
+        \toprule
+        \textbf{Producto} & \textbf{Promedio Calificación} & \textbf{Total Reseñas} \\
+        \midrule
+        Tarjeta Gráfica AMD Radeon RX 7800 XT & 5.00 & 1 \\
+        Monitor Gaming 144Hz 27" & 5.00 & 1 \\
+        Audífonos de Estudio Cerrados & 5.00 & 1 \\
+        Mouse Gaming Logitech G502 & 5.00 & 1 \\
+        Micrófono de Condensador USB & 4.00 & 1 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Resultados de Pruebas de Procedimientos Almacenados}
+Para garantizar la integridad del sistema, se ejecutaron pruebas funcionales sobre los 8 procedimientos almacenados, forzando errores de lógica de negocio para comprobar los candados de seguridad. A continuación, las salidas obtenidas:
+
+\textbf{1. Prueba de validación de reseñas (\texttt{sp\_registrar\_reseña}):} \\
+Al intentar que un cliente reseñara un producto que no ha comprado, la base de datos bloqueó la inserción y arrojó el error:
+\begin{lstlisting}[language=SQL, numbers=none]
+Error Code: 45000. Error: Solo los clientes que han comprado el producto pueden dejar una reseña.
+\end{lstlisting}
+
+\textbf{2. Prueba de límite de pedidos (\texttt{sp\_registrar\_pedido}):} \\
+Se simuló la inserción de un sexto pedido pendiente para un mismo cliente. El procedimiento detuvo la acción con la siguiente alerta:
+\begin{lstlisting}[language=SQL, numbers=none]
+Error Code: 45000. Error: El cliente ya alcanzó el límite de 5 pedidos pendientes.
+\end{lstlisting}
+
+\textbf{3. Actualización de inventario (\texttt{sp\_actualizar\_stock}):} \\
+Se ejecutó una simulación de compra descontando 5 unidades de un producto. El sistema restó la cantidad correctamente, actualizando el stock general de 15 a 10 unidades de forma inmediata.
+
+\textbf{4. Cambio de estado de pedido (\texttt{sp\_cambiar\_estado\_pedido}):} \\
+Se actualizó exitosamente el estado del pedido ID 5, pasando de \textit{'pendiente'} a \textit{'enviado'}.
+
+\textbf{5. Eliminar reseña y recalcular (\texttt{sp\_eliminar\_reseña}):} \\
+Al borrar una calificación del sistema, el procedimiento se ejecutó sin errores y devolvió una tabla virtual mostrando el nuevo promedio de calificación del producto afectado.
+
+\textbf{6. Evitar productos duplicados (\texttt{sp\_agregar\_producto}):} \\
+Se intentó registrar un artículo con un nombre ya existente dentro de la misma categoría. El sistema protegió el catálogo arrojando:
+\begin{lstlisting}[language=SQL, numbers=none]
+Error Code: 45000. Error: Ya existe un producto con el mismo nombre en esta categoría.
+\end{lstlisting}
+
+\textbf{7. Actualizar información de cliente (\texttt{sp\_actualizar\_cliente}):} \\
+Se modificó exitosamente el número de teléfono y la dirección de envío de un cliente, sin afectar su historial de compras ni su identificador único.
+
+\textbf{8. Reporte de stock bajo (\texttt{sp\_reporte\_stock\_bajo}):} \\
+El procedimiento escaneó el inventario y devolvió la tabla con los artículos próximos a agotarse (menos de 5 unidades), mostrando en la columna \texttt{estado\_inventario} el aviso automático: \textit{"¡Cuidado: Stock bajo, requiere reabastecimiento!"}.
 
 \subsection{Impacto de los Índices (Análisis con EXPLAIN)}
-Para optimizar el rendimiento de la base de datos, se crearon tres índices no agrupados. El impacto de estos índices se analizó utilizando el comando \texttt{EXPLAIN} en MySQL:
-\begin{enumerate}
-    \item \texttt{idx\_productos\_categoria}: Al buscar productos filtrando por \texttt{id\_categoria}, el \texttt{EXPLAIN} demostró que el motor dejó de hacer un \textit{Full Table Scan} (recorrer toda la tabla) y pasó a usar el índice (tipo \textit{ref}), reduciendo significativamente la cantidad de filas examinadas.
-    \item \texttt{idx\_pedidos\_cliente}: Agilizó los cruces (\textit{JOINs}) entre Clientes y Pedidos, vital para la consulta analítica del historial de compras.
-    \item \texttt{idx\_productos\_nombre}: Permitió búsquedas rápidas en el catálogo utilizando la columna de texto.
-\end{enumerate}
+El rendimiento de las consultas críticas fue evaluado utilizando el comando \texttt{EXPLAIN} del motor MySQL para medir el impacto directo de los índices implementados:
+\begin{itemize}
+    \item \textbf{Escenario sin índices (Full Table Scan):} Inicialmente, las búsquedas obligaban al motor a recorrer el 100\% de los registros de las tablas (tipo \textit{ALL}), lo cual es ineficiente a gran escala.
+    \item \textbf{Escenario con índices aplicados (\texttt{idx\_productos\_categoria}, \texttt{idx\_pedidos\_cliente}):} El plan de ejecución demostró un cambio en el tipo de búsqueda, pasando a búsqueda indexada (tipo \textit{ref}). La cantidad de filas examinadas se redujo drásticamente al número exacto de coincidencias necesarias, disminuyendo el costo computacional.
+\end{itemize}
 
 \subsection{Propuestas de Mejoras}
 A partir del análisis de rendimiento, se proponen las siguientes mejoras a futuro:
